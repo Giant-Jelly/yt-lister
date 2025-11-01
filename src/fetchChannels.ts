@@ -1,6 +1,6 @@
 import { appendFile, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import path from 'node:path';
+import * as path from 'node:path';
 
 type SearchListResponse = {
   items?: Array<{
@@ -402,4 +402,7 @@ function sleep(durationMs: number): Promise<void> {
   });
 }
 
-await main();
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
