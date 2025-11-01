@@ -107,10 +107,16 @@ async function main(): Promise<void> {
     return;
   }
 
+  console.info(
+    `Hunting for up to ${TARGET_NEW_CHANNELS} new channels between ${MIN_SUBSCRIBERS.toLocaleString()} and ${MAX_SUBSCRIBERS.toLocaleString()} subscribers across regions [${REGIONS.join(', ')}].`,
+  );
+
   const newRows: CsvRow[] = [];
 
   for (const term of SEARCH_TERMS) {
+    console.info(`\nSearching term: "${term}"`);
     for (const region of REGIONS) {
+      console.info(`  Region: ${region}`);
       let pageToken: string | undefined;
       let attempts = 0;
 
@@ -127,6 +133,7 @@ async function main(): Promise<void> {
           .filter((id): id is string => Boolean(id));
 
         if (channelIds.length === 0) {
+          console.info('    No channel IDs found in this page, moving on.');
           pageToken = searchResponse.nextPageToken;
           continue;
         }
@@ -150,6 +157,7 @@ async function main(): Promise<void> {
           );
 
           if (newRows.length >= TARGET_NEW_CHANNELS) {
+            console.info('    Target reached, stopping early.');
             break;
           }
         }
@@ -159,6 +167,9 @@ async function main(): Promise<void> {
         }
 
         pageToken = searchResponse.nextPageToken;
+        if (pageToken) {
+          console.info('    Fetching next page...');
+        }
         await sleep(150);
       } while (pageToken && newRows.length < TARGET_NEW_CHANNELS && attempts < 10);
 
