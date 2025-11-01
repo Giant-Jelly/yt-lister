@@ -1,4 +1,4 @@
-import { appendFile, readFile, writeFile } from 'node:fs/promises';
+import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import 'dotenv/config';
 import * as path from 'node:path';
@@ -214,6 +214,8 @@ function normalizeNumber(value: string | undefined, fallback: number): number {
 async function ensureCsvFile(): Promise<void> {
   const headerPrefix = CSV_HEADERS.join(',');
   const headerLine = `${headerPrefix}\n`;
+
+  await mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
 
   if (!existsSync(OUTPUT_FILE)) {
     await writeFile(OUTPUT_FILE, headerLine, 'utf8');
