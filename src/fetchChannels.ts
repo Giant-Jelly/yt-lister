@@ -1,5 +1,6 @@
 import { appendFile, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import 'dotenv/config';
 import * as path from 'node:path';
 
 type SearchListResponse = {
